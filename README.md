@@ -6,5 +6,5 @@ In jedem Level muss eine bestimmte Ware in ausreichender Anzahl hergestellt werd
 Die Zeit zur Erreichung des Ziels ist begrenzt.
 
 Implementiert wurde als html mit JavaScript. Die Ausführung des Spiels erfolgt direkt hier im Browser:
-<a href="https://mikro42.github.io/dorfgruen/dorfgruen.html" target="_blank">▶️ Dorfgruen ausführen</a>
+<a href="https://mikro42.github.io/dorfgruen/dorfgruen.html" target="_blank">▶️ Dorfgruen spielen</a>
 
