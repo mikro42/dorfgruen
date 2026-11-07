@@ -964,6 +964,15 @@
       .inter-screen.free .ss-art::after {
         content: "Freies Spiel";
       }
+      .ss-credits {
+        position: absolute;
+        bottom: clamp(12px, 2vw, 24px);
+        right: clamp(16px, 3vw, 36px);
+        font-family: Fredoka, system-ui, sans-serif;
+        font-size: 14px;
+        color: #ffe9b5;
+        opacity: 0.85;
+      }
     </style>
   </head>
   <body>
@@ -1087,10 +1096,8 @@
             <rect x="86.4" y="70" width="3.2" height="8" rx="1.4" fill="#5b3b20" />
           </svg>
         </div>
-        <section class="ss-level">
-          <h3>Level 1 – Hungersnot</h3>
-          <p>Deine Leute haben einen langen Weg hinter sich. Sie sind seit Monaten unterwegs und haben nun dieses unberührte Stück Erde gefunden. Leider sind die Vorräte fast erschöpft. Die ersten Hütten stehen am Bach, aber in den Mägen knurrt der Hunger. Bevor ihr hier wirklich ankommen könnt, muss das Dorf lernen, sich zu ernähren.</p>
-        </section>
+        <section class="ss-level" id="startLevelInfo"></section>
+        <div class="ss-credits">by Miko Mynski</div>
       </section>
     </div>
 
@@ -1148,7 +1155,7 @@
 
       const BASE_INVENTORY = { food: 100, plank: 12, stone: 8, wood: 4, gold_nugget: 0, gold_shaped: 0, gold_coin: 0, paper: 0, book: 0, kraeutertrunk: 0, wasser: 10, getreide: 20, mehl: 0, coal: 0, eisen: 0, eisenstange: 0, werkzeug: 12 };
       const LEVELS = [
-        { quest: "Hungersnot", deadline: 183, goalText: "Habe 123 Nahrung bis Tag 183.", check: (s) => (s.inv.food || 0) >= 123, progress: (s) => `🌾 ${Math.min(123, s.inv.food || 0)} / 123`, inv: Object.assign({}, BASE_INVENTORY) },
+        { quest: "Hungersnot", deadline: 183, goalText: "Habe 123 Nahrung bis Tag 183.", introTitle: "Level 1 – Hungersnot", introText: "Deine Leute haben einen langen Weg hinter sich. Sie sind seit Monaten unterwegs und haben nun dieses unberührte Stück Erde gefunden. Leider sind die Vorräte fast erschöpft. Die ersten Hütten stehen am Bach, aber in den Mägen knurrt der Hunger. Bevor ihr hier wirklich ankommen könnt, muss das Dorf lernen, sich zu ernähren.", check: (s) => (s.inv.food || 0) >= 123, progress: (s) => `🌾 ${Math.min(123, s.inv.food || 0)} / 123`, inv: Object.assign({}, BASE_INVENTORY) },
         { quest: "Bauwelle", deadline: 365, goalText: "Habe 60 Stämme, 60 Bretter und 60 Stein bis Tag 365.", check: (s) => (s.inv.wood || 0) >= 60 && (s.inv.plank || 0) >= 60 && (s.inv.stone || 0) >= 60, progress: (s) => `🪵 ${Math.min(60, s.inv.wood || 0)}/60 · 🟫 ${Math.min(60, s.inv.plank || 0)}/60 · 🧱 ${Math.min(60, s.inv.stone || 0)}/60`, inv: Object.assign({}, BASE_INVENTORY) },
         { quest: "Schwarze Energie", deadline: 183, goalText: "Habe 99 Kohle bis Tag 183.", check: (s) => (s.inv.coal || 0) >= 99, progress: (s) => `⚫ ${Math.min(99, s.inv.coal || 0)} / 99`, inv: Object.assign({}, BASE_INVENTORY) },
         { quest: "Eisensturm", deadline: 365, goalText: "Habe 35 Werkzeuge bis Tag 365.", check: (s) => (s.inv.werkzeug || 0) >= 35, progress: (s) => `🔧 ${Math.min(35, s.inv.werkzeug || 0)} / 35`, inv: Object.assign({}, BASE_INVENTORY) },
@@ -1208,8 +1215,61 @@
         return { sky: "linear-gradient(90deg, " + interRgb(p.skyL) + " 0%, " + interRgb(p.skyM) + " 46%, " + interRgb(p.skyR) + " 100%)", ground: "linear-gradient(90deg, " + interRgb(p.groundL) + " 0%, " + interRgb(p.groundM) + " 52%, " + interRgb(p.groundR) + " 100%)" };
       }
       function interArtSVG(idx) {
+        if (idx === 0) {
+          return `<svg viewBox='0 0 160 100' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Gezeichneter Platzhalter: Wandernde in trockener Landschaft'><defs><linearGradient id='ssSkyG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#f3d9a6'/><stop offset='.55' stop-color='#e4bd80'/><stop offset='1' stop-color='#c78f52'/></linearGradient><linearGradient id='ssGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='#9a6b37'/><stop offset='.5' stop-color='#84552b'/><stop offset='1' stop-color='#6d431f'/></linearGradient></defs><rect width='160' height='62' fill='url(#ssSkyG)'/><circle cx='118' cy='24' r='11' fill='#fff2c9' opacity='.95'/><path d='M0 62 C30 54, 70 58, 160 52 V100 H0 Z' fill='url(#ssGroundG)'/><path d='M0 68 C34 64, 90 70, 160 62' stroke='#5c3a1d' stroke-width='1.2' fill='none' opacity='.45'/><path d='M22 96 L64 66 M88 96 L120 67' stroke='#f4e2b8' stroke-width='2.2' stroke-linecap='round' opacity='.38'/><rect x='18' y='56' width='2' height='6' fill='#6b4a2a'/><circle cx='19' cy='52' r='4' fill='#7fbf6a' opacity='.95'/><rect x='30' y='54' width='2.2' height='8' fill='#6b4a2a'/><circle cx='31' cy='49' r='5.5' fill='#8fd06b' opacity='.95'/><rect x='44' y='52' width='2.6' height='10' fill='#6b4a2a'/><circle cx='45' cy='46' r='7' fill='#9ed16b' opacity='.95'/><rect x='108' y='42' width='3' height='18' rx='1' fill='#5d3b1e'/><path d='M109 46 L100 38 M109 44 L117 37 M109 42 L105 32 M109 42 L113 31' stroke='#6e4a25' stroke-width='1.6' stroke-linecap='round'/><g fill='#5b3b20'><circle cx='70' cy='68' r='2.4'/><rect x='68.4' y='70' width='3.2' height='8' rx='1.4'/><circle cx='79' cy='70' r='2.1'/><rect x='77.6' y='72' width='2.8' height='7' rx='1.2'/></g><circle cx='88' cy='68' r='2.4' fill='#5b3b20'/><rect x='86.4' y='70' width='3.2' height='8' rx='1.4' fill='#5b3b20'/></svg>`;
+        }
+        if (idx === 1) {
+          const p = interPalette(0);
+          let fields = "";
+          const fieldDefs = [
+            { x: 80, y: 74, w: 36, h: 10 },
+            { x: 124, y: 70.5, w: 28, h: 9 },
+          ];
+          for (let fi = 0; fi < fieldDefs.length; fi++) {
+            const f = fieldDefs[fi];
+            fields += `<rect x='${f.x}' y='${f.y}' width='${f.w}' height='${f.h}' rx='1.5' fill='${interRgb(p.soil)}' stroke='rgba(0,0,0,.18)'/>`;
+            const rows = Math.max(3, Math.floor(f.w / 7));
+            for (let k = 0; k < rows; k++) {
+              const sx = f.x + 4 + k * ((f.w - 8) / Math.max(1, rows - 1));
+              fields += `<line x1='${sx.toFixed(1)}' y1='${f.y + 2}' x2='${sx.toFixed(1)}' y2='${f.y + f.h - 2}' stroke='rgba(0,0,0,.13)'/>`;
+              for (let s = 0; s < 3; s++) {
+                const sy = f.y + 2.5 + s * ((f.h - 5) / 2);
+                fields += `<circle cx='${sx.toFixed(1)}' cy='${sy.toFixed(1)}' r='.85' fill='${interRgb(p.sprout)}'/>`;
+              }
+            }
+          }
+          let huts = "";
+          const hutDefs = [
+            { x: 96, y: 49, w: 17, h: 11 },
+            { x: 120, y: 51, w: 16, h: 10 },
+            { x: 140, y: 50, w: 13, h: 9 },
+          ];
+          for (let hi = 0; hi < hutDefs.length; hi++) {
+            const h = hutDefs[hi];
+            const cx = (h.x + h.w / 2).toFixed(1);
+            huts += `<rect x='${h.x}' y='${h.y}' width='${h.w}' height='${h.h}' fill='#d8c094' stroke='rgba(0,0,0,.25)'/>`;
+            huts += `<path d='M${(h.x - 1.5).toFixed(1)} ${h.y} L${cx} ${(h.y - h.h * 0.62).toFixed(1)} L${(h.x + h.w + 1.5).toFixed(1)} ${h.y} Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/>`;
+            huts += `<rect x='${cx - 2}' y='${h.y + h.h - 4}' width='4' height='4' fill='#6b4a2a'/>`;
+          }
+          const veg = `<path d='M10 57.5 L17 52.5 L25 57.5 Z' fill='#9aa1a8' stroke='rgba(0,0,0,.18)'/><path d='M24 59.5 L30 55.5 L37 59.5 Z' fill='#8b8f96' stroke='rgba(0,0,0,.18)'/><circle cx='42' cy='70' r='3.2' fill='${interRgb(p.bush)}' opacity='.9'/><rect x='91' y='52' width='2' height='6' fill='#6b4a2a'/><circle cx='92' cy='48' r='5' fill='${interRgb(p.bush)}' opacity='.95'/><circle cx='136' cy='50' r='4.2' fill='${interRgb(p.bush2)}' opacity='.95'/><circle cx='150' cy='53' r='3.4' fill='${interRgb(p.bush)}' opacity='.9'/>`;
+          const water = `<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#8fd8f5' stroke-width='3.2' opacity='.95'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='rgba(255,255,255,.45)' stroke-width='.9'/>`;
+          const people = `<g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='66' cy='51.5' r='2' fill='#f2c9a0'/><path d='M66 53 L64.5 58 M64.5 58 L62 62 M64.5 58 L67 62 M66 54 L62 55 M66 54 L70 55' fill='none'/><rect x='57' y='53.4' width='18' height='2.6' rx='.8' fill='#8a5a33' stroke='rgba(0,0,0,.2)'/><circle cx='80' cy='54' r='2' fill='#f2c9a0'/><path d='M80 56 L79 61 M79 61 L76.5 65 M79 61 L81.5 65 M80 57 L76 58 M80 57 L84 58' fill='none'/><rect x='77.5' y='56' width='6' height='4' rx='.8' fill='#b9bec6' stroke='rgba(0,0,0,.25)'/></g>`;
+          const sun = `<circle cx='126' cy='21' r='17' fill='rgba(255,217,151,.25)'/><circle cx='126' cy='21' r='8.5' fill='#fff3c4'/><circle cx='126' cy='21' r='5.5' fill='rgba(255,255,255,.7)'/>`;
+          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Gezeichneter Übergang vom kargen Tal zum grünen Dorf mit jungen Feldern, Hütten am Bach, Siedlern und Kindern'><defs><linearGradient id='iaSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(p.skyL)}'/><stop offset='.55' stop-color='${interRgb(p.skyM)}'/><stop offset='1' stop-color='${interRgb(p.skyR)}'/></linearGradient><linearGradient id='iaGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(p.groundL)}'/><stop offset='.52' stop-color='${interRgb(p.groundM)}'/><stop offset='1' stop-color='${interRgb(p.groundR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#iaSkyG)'/>${sun}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#iaGroundG)'/>${veg}${water}${fields}${huts}${people}</svg>`;
+        }
         if (idx === 2) {
-          const p = interPalette(idx);
+          const p = interPalette(1);
+          const sun = `<circle cx='126' cy='21' r='8.5' fill='#fff3c4'/>`;
+          const bush = `<circle cx='12' cy='62' r='3.2' fill='${interRgb(p.bush)}' opacity='.9'/>`;
+          const hut = `<rect x='95' y='48' width='18' height='13' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M93 48 L104 37 L115 48 Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='101' y='56' width='4' height='5' fill='#6b4a2a'/>`;
+          const construction = `<path d='M127 59 H145 M127 49 V59 M135 49 V59 M143 49 V59 M126 48 H146 M127 48 L136 40 L145 48' stroke='#8a5a33' stroke-width='2' fill='none'/><path d='M120 61 L128 52' stroke='#c49a6c' stroke-width='2' stroke-linecap='round'/>`;
+          const wood = `<g fill='#6b4423' stroke='rgba(0,0,0,.3)'><circle cx='16' cy='74' r='2.4'/><circle cx='22' cy='74' r='2.4'/><circle cx='28' cy='74' r='2.4'/><circle cx='19' cy='70' r='2.4'/><circle cx='25' cy='70' r='2.4'/></g><g fill='#a26b3e'><circle cx='16' cy='74' r='.9'/><circle cx='22' cy='74' r='.9'/><circle cx='28' cy='74' r='.9'/><circle cx='19' cy='70' r='.9'/><circle cx='25' cy='70' r='.9'/></g><rect x='36' y='76' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><rect x='37' y='73.5' width='16' height='2.2' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.2)'/><rect x='38' y='71' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><path d='M54 78 L60 68' stroke='#c49a6c' stroke-width='2' stroke-linecap='round'/>`;
+          const stones = `<ellipse cx='64' cy='76' rx='3.2' ry='2.2' fill='#8b8f96' stroke='rgba(0,0,0,.2)'/><ellipse cx='69' cy='75' rx='2.8' ry='2' fill='#9aa1a8' stroke='rgba(0,0,0,.2)'/><ellipse cx='66' cy='72' rx='2.4' ry='1.8' fill='#8b8f96' stroke='rgba(0,0,0,.2)'/><rect x='72' y='73' width='5' height='4' rx='1' fill='#7d8a94' stroke='rgba(0,0,0,.2)'/>`;
+          const people = `<g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='82' cy='63' r='1.8' fill='#f2c9a0'/><path d='M82 64.8 L82 70 M82 70 L79.5 74 M82 70 L84.5 74 M82 66 L78.5 69.5 M82 66 L85.5 69.5' fill='none'/><circle cx='94' cy='65' r='1.8' fill='#f2c9a0'/><path d='M94 66.8 L94 72 M94 72 L91.5 76 M94 72 L96.5 76 M94 68 L90.5 71.5 M94 68 L97.5 71.5' fill='none'/></g><path d='M81.3 63.4 q.7 .6 1.4 0 M93.3 65.4 q.7 .6 1.4 0' stroke='#7a3b2a' stroke-width='.45' fill='none'/><rect x='83' y='69.5' width='12' height='1.6' rx='.6' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/>`;
+          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Bauwelle: neue Hütte, Hütte im Bau, Baumstämme, Bretter, Steine und zwei Siedler tragen einen Stamm'><defs><linearGradient id='ibSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(p.skyL)}'/><stop offset='.55' stop-color='${interRgb(p.skyM)}'/><stop offset='1' stop-color='${interRgb(p.skyR)}'/></linearGradient><linearGradient id='ibGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(p.groundL)}'/><stop offset='.52' stop-color='${interRgb(p.groundM)}'/><stop offset='1' stop-color='${interRgb(p.groundR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#ibSkyG)'/>${sun}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#ibGroundG)'/>${bush}${hut}${construction}${wood}${stones}${people}</svg>`;
+        }
+        if (idx === 3) {
+          const p = interPalette(idx - 1);
           const skyL = interMix(p.skyL, [126, 138, 174], 0.42),
             skyM = interMix(p.skyM, [139, 120, 150], 0.42),
             skyR = interMix(p.skyR, [96, 102, 138], 0.48);
@@ -1252,16 +1312,16 @@
             const cx = (mLeft + mRight) / 2,
               d = Math.abs(x - cx) / ((mRight - mLeft) / 2),
               h = 12.5 * (1 - d * 0.55);
-            meiler += `<rect x='${(x - 0.7).toFixed(1)}' y='${(mBase - h).toFixed(1)}' width='1.4' height='${h.toFixed(1)}' rx='.7' fill='${x % 4 < 2 ? "#8a5a33" : "#6b4423"}'/>`;
+            meiler += `<rect x='${(x - 1.2).toFixed(1)}' y='${(mBase - h).toFixed(1)}' width='2.4' height='${h.toFixed(1)}' rx='.7' fill='${x % 4 < 2 ? "#4a3018" : "#6b4423"}'/>`;
           }
-          const smoke = `<circle cx='59' cy='60' r='1.6' fill='rgba(230,230,230,.4)'/><circle cx='61' cy='55' r='2.2' fill='rgba(230,230,230,.3)'/><circle cx='64' cy='49' r='2.8' fill='rgba(230,230,230,.2)'/>`;
-          const wood = `<g fill='#6b4423' stroke='rgba(0,0,0,.3)'><circle cx='8' cy='74' r='2.4'/><circle cx='14' cy='74' r='2.4'/><circle cx='20' cy='74' r='2.4'/><circle cx='11' cy='70' r='2.4'/><circle cx='17' cy='70' r='2.4'/></g><g fill='#a26b3e'><circle cx='8' cy='74' r='.9'/><circle cx='14' cy='74' r='.9'/><circle cx='20' cy='74' r='.9'/><circle cx='11' cy='70' r='.9'/><circle cx='17' cy='70' r='.9'/></g><rect x='26' y='76' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><rect x='27' y='73.5' width='16' height='2.2' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.2)'/><rect x='28' y='71' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/>`;
+          const smoke = `<circle cx='59' cy='60' r='2.4' fill='rgba(108,122,84,.45)'/><circle cx='62' cy='55.8' r='3.3' fill='rgba(230,230,230,.3)'/><circle cx='66.5' cy='46.8' r='4.2' fill='rgba(230,230,230,.2)'/><circle cx='71' cy='37.8' r='5' fill='rgba(230,230,230,.15)'/>`;
+          const wood = `<g fill='#6b4423' stroke='rgba(0,0,0,.3)'><circle cx='8' cy='74' r='2.4'/><circle cx='14' cy='74' r='2.4'/><circle cx='20' cy='74' r='2.4'/><circle cx='11' cy='70' r='2.4'/><circle cx='17' cy='70' r='2.4'/></g><g fill='#a26b3e'><circle cx='8' cy='74' r='.9'/><circle cx='14' cy='74' r='.9'/><circle cx='20' cy='74' r='.9'/><circle cx='11' cy='70' r='.9'/><circle cx='17' cy='70' r='.9'/></g><rect x='31' y='76' width='8' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><rect x='32' y='73.5' width='8' height='2.2' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.2)'/><rect x='33' y='71' width='8' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/>`;
           const coal = `<ellipse cx='88' cy='77' rx='9' ry='3.5' fill='#14171c' stroke='rgba(0,0,0,.3)'/><ellipse cx='85' cy='76' rx='2.5' ry='.9' fill='rgba(255,255,255,.08)'/><circle cx='91' cy='76.4' r='.7' fill='#3a3f46'/><circle cx='86' cy='77.6' r='.6' fill='#3a3f46'/>`;
-          const hut = `<rect x='104' y='63' width='16' height='11' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M102 63 L112 53 L122 63 Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='109' y='70' width='4' height='4' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='111' cy='72' r='4.5' fill='rgba(255,201,77,.16)'/><rect x='115' y='68' width='3' height='6' fill='#6b4a2a'/>`;
+          const hut = `<rect x='104' y='63' width='16' height='11' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M102 63 L112 53 L122 63 Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='109' y='68' width='4' height='4' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='111' cy='72' r='4.5' fill='rgba(255,201,77,.16)'/><rect x='115' y='68' width='3' height='6' fill='#6b4a2a'/>`;
           return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Schwarze Energie: herbstliches Tal mit dunklem Wald, Köhlermeiler mit Rauch, Holzstapel, Kohlehaufen und warmer Hütte bei kühler Abendstimmung'><defs><linearGradient id='icSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(skyL)}'/><stop offset='.55' stop-color='${interRgb(skyM)}'/><stop offset='1' stop-color='${interRgb(skyR)}'/></linearGradient><linearGradient id='icGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(gL)}'/><stop offset='.52' stop-color='${interRgb(gM)}'/><stop offset='1' stop-color='${interRgb(gR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#icSkyG)'/><circle cx='128' cy='34' r='7' fill='#ffd9a3' opacity='.95'/><circle cx='128' cy='34' r='12' fill='rgba(255,201,77,.16)'/><path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#icGroundG)'/>${trees}${leaves}<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#8fd8f5' stroke-width='2.4' opacity='.55'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='rgba(255,255,255,.3)' stroke-width='.7'/>${groundLeaves}${wood}${meiler}${smoke}${coal}${hut}</svg>`;
         }
-        if (idx === 3) {
-          const pal = interPalette(idx);
+        if (idx === 4) {
+          const pal = interPalette(idx - 1);
           const skyL = interMix(pal.skyL, [92, 104, 132], 0.58),
             skyM = interMix(pal.skyM, [116, 112, 138], 0.58),
             skyR = interMix(pal.skyR, [70, 82, 114], 0.62);
@@ -1273,21 +1333,9 @@
             { x: 8, s: 0.9 },
             { x: 20, s: 1.1 },
             { x: 34, s: 0.8 },
-            { x: 126, s: 0.9 },
-            { x: 140, s: 1.15 },
-            { x: 152, s: 0.85 },
           ];
           for (const t of td) {
             trees += `<rect x='${(t.x - 0.7).toFixed(1)}' y='56' width='1.4' height='9' fill='#3a2b1c'/><path d='M${t.x} 60 L${(t.x - 4 * t.s).toFixed(1)} ${(52 - t.s * 2).toFixed(1)} M${t.x} 58 L${(t.x + 3.5 * t.s).toFixed(1)} ${(50 - t.s * 2).toFixed(1)} M${t.x} 56 L${(t.x - 2.5 * t.s).toFixed(1)} ${(47 - t.s * 2).toFixed(1)}' stroke='#3a2b1c' stroke-width='1' fill='none'/>`;
-          }
-          let branches = "";
-          const bd = [
-            { x: 50, y: 80, rot: -8, len: 14 },
-            { x: 76, y: 83, rot: 5, len: 12 },
-            { x: 98, y: 79, rot: -4, len: 10 },
-          ];
-          for (const b of bd) {
-            branches += `<g transform='rotate(${b.rot} ${b.x} ${b.y})'><rect x='${(b.x - b.len / 2).toFixed(1)}' y='${(b.y - 0.8).toFixed(1)}' width='${b.len}' height='1.6' rx='.8' fill='#4a3526'/><path d='M${(b.x + b.len * 0.1).toFixed(1)} ${b.y} L${(b.x + b.len * 0.3).toFixed(1)} ${(b.y - 2.5).toFixed(1)} M${(b.x - b.len * 0.15).toFixed(1)} ${b.y} L${(b.x - b.len * 0.35).toFixed(1)} ${(b.y + 2).toFixed(1)}' stroke='#4a3526' stroke-width='.9'/></g>`;
           }
           let huts = "";
           const hud = [
@@ -1299,12 +1347,12 @@
             const cx = h.x + h.w / 2;
             huts += `<rect x='${h.x}' y='${h.y}' width='${h.w}' height='${h.h}' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M${(h.x - 1.5).toFixed(1)} ${h.y} L${cx.toFixed(1)} ${(h.y - h.h * 0.62).toFixed(1)} L${(h.x + h.w + 1.5).toFixed(1)} ${h.y} Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='${(cx - 2).toFixed(1)}' y='${(h.y + h.h - 4).toFixed(1)}' width='4' height='4' fill='#6b4a2a'/><rect x='${(h.x + 1.5).toFixed(1)}' y='${(h.y + 2.5).toFixed(1)}' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='${(h.x + 3).toFixed(1)}' cy='${(h.y + 4).toFixed(1)}' r='4' fill='rgba(255,201,77,.16)'/>`;
           }
-          const iron = `<rect x='46' y='57' width='20' height='13' fill='#9c6b3d' stroke='rgba(0,0,0,.25)'/><path d='M44 57 L56 48 L68 57 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='51' y='63' width='5' height='7' fill='#1a1d22'/><circle cx='53.5' cy='68' r='2.4' fill='rgba(255,140,40,.9)'/><circle cx='53.5' cy='68' r='4.5' fill='rgba(255,140,40,.18)'/><rect x='61' y='60' width='3' height='6' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='62.5' cy='63' r='4' fill='rgba(255,201,77,.16)'/><rect x='64' y='50' width='2' height='7' fill='#8b8f96'/><circle cx='65' cy='47' r='1.3' fill='rgba(230,230,230,.35)'/><circle cx='66.5' cy='43' r='1.8' fill='rgba(230,230,230,.25)'/>`;
+          const iron = `<rect x='46' y='63.5' width='20' height='13' fill='#9c6b3d' stroke='rgba(0,0,0,.25)'/><path d='M44 63.5 L56 54.5 L68 63.5 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='51' y='69.5' width='5' height='7' fill='#ffd9a3'/><rect x='61' y='66.5' width='3' height='6' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='62.5' cy='69.5' r='4' fill='rgba(255,201,77,.16)'/><rect x='64' y='56.5' width='2' height='7' fill='#8b8f96'/><circle cx='65' cy='53.5' r='1.3' fill='rgba(230,230,230,.35)'/><circle cx='66.5' cy='49.5' r='1.8' fill='rgba(230,230,230,.25)'/>`;
           const storm = `<g fill='rgba(40,48,66,.5)'><ellipse cx='32' cy='19' rx='18' ry='7'/><ellipse cx='48' cy='16' rx='14' ry='6'/><ellipse cx='104' cy='15' rx='20' ry='7'/><ellipse cx='122' cy='13' rx='14' ry='6'/></g><path d='M10 32 C30 28, 50 36, 70 30 M90 26 C110 22, 130 30, 150 24' stroke='rgba(255,255,255,.22)' stroke-width='.8' fill='none'/><path d='M20 40 C40 36, 60 44, 80 38 M100 36 C120 32, 140 40, 158 34' stroke='rgba(255,255,255,.16)' stroke-width='.7' fill='none'/>`;
           const water = `<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#8fd8f5' stroke-width='2.4' opacity='.55'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='rgba(255,255,255,.3)' stroke-width='.7'/>`;
-          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Eisensturm: später Herbst mit Sturmhimmel, kahlen Bäumen, Ästen und warmen Lichtern in Hütten und Eisenhütte'><defs><linearGradient id='icSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(skyL)}'/><stop offset='.55' stop-color='${interRgb(skyM)}'/><stop offset='1' stop-color='${interRgb(skyR)}'/></linearGradient><linearGradient id='icGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(gL)}'/><stop offset='.52' stop-color='${interRgb(gM)}'/><stop offset='1' stop-color='${interRgb(gR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#icSkyG)'/>${storm}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#icGroundG)'/>${trees}${water}${branches}${iron}${huts}</svg>`;
+          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Eisensturm: später Herbst mit Sturmhimmel, kahlen Bäumen und warmen Lichtern in Hütten und Eisenhütte'><defs><linearGradient id='icSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(skyL)}'/><stop offset='.55' stop-color='${interRgb(skyM)}'/><stop offset='1' stop-color='${interRgb(skyR)}'/></linearGradient><linearGradient id='icGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(gL)}'/><stop offset='.52' stop-color='${interRgb(gM)}'/><stop offset='1' stop-color='${interRgb(gR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#icSkyG)'/>${storm}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#icGroundG)'/>${trees}${water}${iron}${huts}</svg>`;
         }
-        if (idx === 4) {
+        if (idx === 5) {
           const skyL = "#eef4fb",
             skyM = "#f6eff7",
             skyR = "#fbeaf0";
@@ -1313,15 +1361,18 @@
             gR = "#dfe9f6";
           let trees = "";
           const td = [
-            { x: 8, s: 0.9 },
-            { x: 20, s: 1.1 },
-            { x: 34, s: 0.8 },
-            { x: 126, s: 0.9 },
-            { x: 140, s: 1.15 },
-            { x: 152, s: 0.85 },
+            { x: 8, s: 0.9, yb: 65 },
+            { x: 20, s: 1.1, yb: 65 },
+            { x: 34, s: 0.8, yb: 65 },
+            { x: 71.4, s: 0.45, yb: 56.6 },
+            { x: 78.7, s: 0.58, yb: 55.6 },
+            { x: 86, s: 0.43, yb: 54 },
           ];
           for (const t of td) {
-            trees += `<rect x='${(t.x - 0.7).toFixed(1)}' y='56' width='1.4' height='9' fill='#3a2b1c'/><path d='M${(t.x - 4 * t.s).toFixed(1)} 58 L${t.x} ${(44 - t.s * 4).toFixed(1)} L${(t.x + 4 * t.s).toFixed(1)} 58 Z' fill='#dcecf9' stroke='rgba(0,0,0,.16)'/><path d='M${(t.x - 3.2 * t.s).toFixed(1)} 60 L${t.x} ${(47 - t.s * 3).toFixed(1)} L${(t.x + 3.2 * t.s).toFixed(1)} 60 Z' fill='#f7fbff'/>`;
+            const tw = 0.7 * t.s,
+              th = 9 * t.s,
+              topY = t.yb - th;
+            trees += `<rect x='${(t.x - tw).toFixed(1)}' y='${topY.toFixed(1)}' width='${(2 * tw).toFixed(1)}' height='${th.toFixed(1)}' fill='#3a2b1c'/><path d='M${(t.x - 4 * t.s).toFixed(1)} ${(t.yb - 7 * t.s).toFixed(1)} L${t.x} ${(topY - 16 * t.s).toFixed(1)} L${(t.x + 4 * t.s).toFixed(1)} ${(t.yb - 7 * t.s).toFixed(1)} Z' fill='#dcecf9' stroke='rgba(0,0,0,.16)'/><path d='M${(t.x - 3.2 * t.s).toFixed(1)} ${(t.yb - 5 * t.s).toFixed(1)} L${t.x} ${(topY - 13 * t.s).toFixed(1)} L${(t.x + 3.2 * t.s).toFixed(1)} ${(t.yb - 5 * t.s).toFixed(1)} Z' fill='#f7fbff'/>`;
           }
           const wood = `<g fill='#6b4423' stroke='rgba(0,0,0,.3)'><circle cx='8' cy='74' r='2.4'/><circle cx='14' cy='74' r='2.4'/><circle cx='20' cy='74' r='2.4'/><circle cx='11' cy='70' r='2.4'/><circle cx='17' cy='70' r='2.4'/></g><g fill='#a26b3e'><circle cx='8' cy='74' r='.9'/><circle cx='14' cy='74' r='.9'/><circle cx='20' cy='74' r='.9'/><circle cx='11' cy='70' r='.9'/><circle cx='17' cy='70' r='.9'/></g><rect x='26' y='76' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><rect x='27' y='73.5' width='16' height='2.2' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.2)'/><rect x='28' y='71' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><g fill='#f7fbff'><ellipse cx='8' cy='72.3' rx='1.7' ry='.55'/><ellipse cx='14' cy='72.3' rx='1.7' ry='.55'/><ellipse cx='20' cy='72.3' rx='1.7' ry='.55'/><ellipse cx='11' cy='68.3' rx='1.7' ry='.55'/><ellipse cx='17' cy='68.3' rx='1.7' ry='.55'/><rect x='27.4' y='70.4' width='15.2' height='1.1' rx='.55'/></g>`;
           let huts = "";
@@ -1330,33 +1381,42 @@
             { x: 120, y: 51, w: 16, h: 10 },
             { x: 140, y: 50, w: 13, h: 9 },
           ];
-          for (const h of hud) {
-            const cx = (h.x + h.w / 2).toFixed(1);
-            huts += `<rect x='${h.x}' y='${h.y}' width='${h.w}' height='${h.h}' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M${(h.x - 1.5).toFixed(1)} ${h.y} L${cx} ${(h.y - h.h * 0.62).toFixed(1)} L${(h.x + h.w + 1.5).toFixed(1)} ${h.y} Z' fill='#8a6b42' stroke='rgba(0,0,0,.25)'/><path d='M${(h.x - 1.1).toFixed(1)} ${(h.y - 0.35).toFixed(1)} L${cx} ${(h.y - h.h * 0.62 + 0.45).toFixed(1)} L${(h.x + h.w + 1.1).toFixed(1)} ${(h.y - 0.35).toFixed(1)} Z' fill='#f7fbff' stroke='rgba(0,0,0,.18)'/><rect x='${cx - 2}' y='${h.y + h.h - 4}' width='4' height='4' fill='#6b4a2a'/><rect x='${(h.x + 1.5).toFixed(1)}' y='${(h.y + 2.5).toFixed(1)}' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='${(h.x + 3).toFixed(1)}' cy='${(h.y + 4).toFixed(1)}' r='4' fill='rgba(255,201,77,.16)'/>`;
+          for (let hi = 0; hi < hud.length; hi++) {
+            const h = hud[hi];
+            const cx = Number((h.x + h.w / 2).toFixed(1));
+            let dw = 4,
+              dx = cx - 2;
+            if (hi === hud.length - 1) {
+              dw = (4 * 2) / 3;
+              dx = cx - 0.5;
+            }
+            const dh = 8;
+            huts += `<rect x='${h.x}' y='${h.y}' width='${h.w}' height='${h.h}' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M${(h.x - 1.5).toFixed(1)} ${h.y} L${cx.toFixed(1)} ${(h.y - h.h * 0.62).toFixed(1)} L${(h.x + h.w + 1.5).toFixed(1)} ${h.y} Z' fill='#8a6b42' stroke='rgba(0,0,0,.25)'/><path d='M${(h.x - 1.1).toFixed(1)} ${(h.y - 0.35).toFixed(1)} L${cx.toFixed(1)} ${(h.y - h.h * 0.62 + 0.45).toFixed(1)} L${(h.x + h.w + 1.1).toFixed(1)} ${(h.y - 0.35).toFixed(1)} Z' fill='#f7fbff' stroke='rgba(0,0,0,.18)'/><rect x='${dx.toFixed(2)}' y='${h.y + h.h - dh}' width='${dw.toFixed(2)}' height='${dh}' fill='#6b4a2a'/><rect x='${(h.x + 1.5).toFixed(1)}' y='${(h.y + 2.5).toFixed(1)}' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='${(h.x + 3).toFixed(1)}' cy='${(h.y + 4).toFixed(1)}' r='4' fill='rgba(255,201,77,.16)'/>`;
           }
           const stream = `<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#dcefff' stroke-width='4.2' opacity='.95'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#f7fcff' stroke-width='1.4'/><path d='M18 68 l4 -1 M52 70 l5 -1 M96 65 l5 -1 M132 62 l4 -1' stroke='#a9cbe8' stroke-width='.6' opacity='.7'/>`;
           const snow = `<g fill='#ffffff'><circle cx='18' cy='16' r='.7'/><circle cx='38' cy='25' r='.6'/><circle cx='64' cy='14' r='.7'/><circle cx='92' cy='22' r='.6'/><circle cx='118' cy='12' r='.7'/><circle cx='138' cy='26' r='.6'/><circle cx='50' cy='34' r='.5'/><circle cx='104' cy='34' r='.5'/></g>`;
-          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Erkältungszeit: winterliches Dorfgrün mit gefrorenem Bach, sanftem Schnee auf Hütten, Bäumen und Holzstapel bei pastellfarbenem Himmel'><defs><linearGradient id='icSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${skyL}'/><stop offset='.55' stop-color='${skyM}'/><stop offset='1' stop-color='${skyR}'/></linearGradient><linearGradient id='icGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${gL}'/><stop offset='.52' stop-color='${gM}'/><stop offset='1' stop-color='${gR}'/></linearGradient></defs><rect width='160' height='90' fill='url(#icSkyG)'/><path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#icGroundG)'/>${trees}${stream}${wood}${huts}${snow}</svg>`;
+          const snowman = `<g><circle cx='85.4' cy='75' r='6.2' fill='#ffffff' stroke='rgba(0,0,0,.22)'/><circle cx='85.4' cy='66.5' r='4.3' fill='#ffffff' stroke='rgba(0,0,0,.22)'/><circle cx='83.7' cy='65.3' r='.7' fill='#3a2b1c'/><circle cx='87.1' cy='65.3' r='.7' fill='#3a2b1c'/><path d='M84.7 66.6 L86.1 66.6 L85.4 70.3 Z' fill='#ff8a3d'/><circle cx='85.4' cy='72.9' r='.6' fill='#14171c'/><circle cx='85.4' cy='77.1' r='.6' fill='#14171c'/></g>`;
+          return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Erkältungszeit: winterliches Dorfgrün mit gefrorenem Bach, sanftem Schnee auf Hütten, Bäumen und Holzstapel bei pastellfarbenem Himmel'><defs><linearGradient id='icSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${skyL}'/><stop offset='.55' stop-color='${skyM}'/><stop offset='1' stop-color='${skyR}'/></linearGradient><linearGradient id='icGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${gL}'/><stop offset='.52' stop-color='${gM}'/><stop offset='1' stop-color='${gR}'/></linearGradient></defs><rect width='160' height='90' fill='url(#icSkyG)'/><path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#icGroundG)'/>${trees}${stream}${wood}${huts}${snow}${snowman}</svg>`;
         }
-        if (idx === 5) {
-          const pal = interPalette(idx);
+        if (idx === 6) {
+          const pal = interPalette(idx - 1);
           const skyL = interMix(pal.skyL, [214, 236, 250], 0.38),
             skyM = interMix(pal.skyM, [238, 247, 255], 0.38),
             skyR = interMix(pal.skyR, [190, 226, 160], 0.25);
           const gL = interMix(pal.groundL, [168, 209, 124], 0.3),
             gM = interMix(pal.groundM, [107, 183, 102], 0.3),
             gR = interMix(pal.groundR, [58, 142, 86], 0.2);
-          const snow = `<g fill='#f7fbff' opacity='.9'><ellipse cx='18' cy='82' rx='10' ry='3'/><ellipse cx='46' cy='85' rx='8' ry='2.4'/><ellipse cx='132' cy='78' rx='9' ry='2.6'/></g>`;
-          const veg = `<circle cx='12' cy='63' r='3.4' fill='${interRgb(interMix(pal.bush, [122, 209, 107], 0.35))}' opacity='.9'/><circle cx='88' cy='60' r='4' fill='${interRgb(interMix(pal.bush2, [122, 209, 107], 0.35))}' opacity='.95'/><circle cx='150' cy='58' r='3.6' fill='${interRgb(interMix(pal.bush, [140, 214, 120], 0.3))}' opacity='.9'/><g stroke='#7fbf6a' stroke-width='.8'><path d='M20 78 v-5 M20 75 l-2 -2 M20 75 l2 -2'/><path d='M142 72 v-5 M142 69 l-2 -2 M142 69 l2 -2'/></g>`;
+          const snow = `<g fill='#f7fbff' opacity='.9'><ellipse cx='108' cy='84' rx='10' ry='3'/><ellipse cx='46' cy='85' rx='8' ry='2.4'/><ellipse cx='132' cy='78' rx='9' ry='2.6'/></g>`;
+          const veg = `<g stroke='#7fbf6a' stroke-width='.8'><path d='M20 78 v-5 M20 75 l-2 -2 M20 75 l2 -2'/><path d='M142 72 v-6.25 M142 68.25 l-2.5 -2.5 M142 68.25 l2.5 -2.5'/><path d='M150 79 v-7.5 M150 74 l-3 -3 M150 74 l3 -3'/><path d='M156 85 v-8.75 M156 78.75 l-3.5 -3.5 M156 78.75 l3.5 -3.5'/></g>`;
           const water = `<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#8fd8f5' stroke-width='3.4' opacity='.95'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#eafaff' stroke-width='1.1'/><path d='M18 68 l4 -1 M52 70 l5 -1 M96 65 l5 -1 M132 62 l4 -1' stroke='#a9cbe8' stroke-width='.6' opacity='.7'/>`;
           const cart = `<g><rect x='14' y='69' width='28' height='6' rx='1.5' fill='#8a5a33' stroke='rgba(0,0,0,.25)'/><path d='M14 72 H42 M18 69 V75 M26 69 V75 M34 69 V75' stroke='rgba(0,0,0,.18)' stroke-width='.8'/><circle cx='20' cy='78' r='5.2' fill='#6b4423' stroke='rgba(0,0,0,.3)'/><circle cx='20' cy='78' r='1.6' fill='#c49a6c'/><path d='M20 73 V83 M15 78 H25 M16.5 74.5 L23.5 81.5 M23.5 74.5 L16.5 81.5' stroke='#c49a6c' stroke-width='.9'/><circle cx='36' cy='78' r='5.2' fill='#6b4423' stroke='rgba(0,0,0,.3)'/><circle cx='36' cy='78' r='1.6' fill='#c49a6c'/><path d='M36 73 V83 M31 78 H41 M32.5 74.5 L39.5 81.5 M39.5 74.5 L32.5 81.5' stroke='#c49a6c' stroke-width='.9'/><rect x='18' y='62' width='7' height='7' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.25)'/><rect x='27' y='60' width='8' height='9' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.25)'/><rect x='37' y='63' width='6' height='6' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.25)'/><rect x='45' y='74' width='7' height='6' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.25)'/></g>`;
-          const huts = `<rect x='104' y='50' width='17' height='11' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M102 50 L112.5 39 L123 50 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><path d='M104 49 L112.5 41 L121 49 Z' fill='#f7fbff' opacity='.55'/><rect x='110' y='57' width='4' height='4' fill='#6b4a2a'/><rect x='106.5' y='53' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='108' cy='55' r='4' fill='rgba(255,201,77,.16)'/><rect x='128' y='53' width='16' height='10' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M126 53 L136 43 L146 53 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><path d='M128 52 L136 44.5 L144 52 Z' fill='#f7fbff' opacity='.5'/><rect x='134' y='59' width='4' height='4' fill='#6b4a2a'/><rect x='130.5' y='56' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='132' cy='58' r='4' fill='rgba(255,201,77,.16)'/>`;
-          const people = `<g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='9' cy='70' r='1.8' fill='#f2c9a0'/><path d='M9 71.8 L9 76 M9 76 L7 80 M9 76 L11 80 M9 73 L6.5 74 M9 73 L11.5 74' fill='none'/><path d='M7 69 h4 l-2 -2 z' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><circle cx='96' cy='63' r='1.8' fill='#f2c9a0'/><path d='M96 64.8 L96 69 M96 69 L94 73 M96 69 L98 73 M96 66 L93.5 67 M96 66 L98.5 67' fill='none'/><circle cx='122' cy='63' r='1.5' fill='#f2c9a0'/><path d='M122 64.5 L122 68 M122 68 L120.5 71 M122 68 L123.5 71 M122 65.5 L120 66 M122 65.5 L124 66' fill='none'/></g>`;
+          const huts = `<rect x='104' y='50' width='17' height='11' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M102 50 L112.5 39 L123 50 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><path d='M104 49 L112.5 41 L121 49 Z' fill='#f7fbff' opacity='.55'/><rect x='110' y='57' width='4' height='4' fill='#6b4a2a'/><rect x='106.5' y='53' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='108' cy='55' r='4' fill='rgba(255,201,77,.16)'/><rect x='128' y='53' width='16' height='7' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M126 53 L136 43 L146 53 Z' fill='${interRgb(pal.roof)}' stroke='rgba(0,0,0,.25)'/><path d='M128 52 L136 44.5 L144 52 Z' fill='#f7fbff' opacity='.5'/><rect x='134' y='56' width='4' height='4' fill='#6b4a2a'/><rect x='130.5' y='56' width='3' height='3' fill='#ffd9a3' stroke='rgba(0,0,0,.25)'/><circle cx='132' cy='58' r='4' fill='rgba(255,201,77,.16)'/>`;
+          const people = `<g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='53' cy='70' r='1.8' fill='#f2c9a0'/><path d='M53 71.8 L53 76 M53 76 L51 80 M53 76 L55 80 M53 73 L49.5 74 M53 73 L55.5 74' fill='none'/><circle cx='96' cy='63' r='1.8' fill='#f2c9a0'/><path d='M96 64.8 L96 69 M96 69 L94 73 M96 69 L98 73 M96 66 L93.5 67 M96 66 L98.5 67' fill='none'/><circle cx='108' cy='64' r='1.5' fill='#f2c9a0'/><path d='M108 65.5 L108 69 M108 69 L106.5 72 M108 69 L109.5 72 M108 66.5 L106 67 M108 66.5 L110 67' fill='none'/></g>`;
           const sun = `<circle cx='126' cy='21' r='16' fill='rgba(255,238,170,.28)'/><circle cx='126' cy='21' r='8.5' fill='#fff3c4'/><circle cx='126' cy='21' r='5.5' fill='rgba(255,255,255,.7)'/>`;
           return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Goldrausch: frühlingshaftes Tal mit Resten von Schnee, sichtbarem Bach, Händlerkarren mit Kisten links und zwei Hütten rechts'><defs><linearGradient id='i6SkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(skyL)}'/><stop offset='.55' stop-color='${interRgb(skyM)}'/><stop offset='1' stop-color='${interRgb(skyR)}'/></linearGradient><linearGradient id='i6GroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(gL)}'/><stop offset='.52' stop-color='${interRgb(gM)}'/><stop offset='1' stop-color='${interRgb(gR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#i6SkyG)'/>${sun}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#i6GroundG)'/>${veg}${water}${snow}${cart}${huts}${people}</svg>`;
         }
-        if (idx === 6) {
-          const p = interPalette(idx);
+        {
+          const p = interPalette(idx - 1);
           let huts = "";
           for (const h of [
             { x: 96, y: 49, w: 17, h: 11 },
@@ -1374,44 +1434,6 @@
           const sun = `<circle cx='126' cy='21' r='17' fill='rgba(255,238,170,.28)'/><circle cx='126' cy='21' r='8.5' fill='#fff3c4'/><circle cx='126' cy='21' r='5.5' fill='rgba(255,255,255,.7)'/>`;
           return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Buchmesse: Dorfgrün im späten Frühling (Wonnemonat Mai) mit Papiermühle am Bach, Wasserrad, Buchpresse, Hütten und zwei Büchern tragenden Leuten'><defs><linearGradient id='i7SkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(p.skyL)}'/><stop offset='.55' stop-color='${interRgb(p.skyM)}'/><stop offset='1' stop-color='${interRgb(p.skyR)}'/></linearGradient><linearGradient id='i7GroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(p.groundL)}'/><stop offset='.52' stop-color='${interRgb(p.groundM)}'/><stop offset='1' stop-color='${interRgb(p.groundR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#i7SkyG)'/>${sun}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#i7GroundG)'/>${veg}${water}${huts}${mill}${press}${people}</svg>`;
         }
-        const p = interPalette(idx);
-        let fields = "";
-        const fieldDefs = [
-          { x: 80, y: 74, w: 36, h: 10 },
-          { x: 124, y: 70.5, w: 28, h: 9 },
-        ];
-        for (let fi = 0; fi < fieldDefs.length; fi++) {
-          const f = fieldDefs[fi];
-          fields += `<rect x='${f.x}' y='${f.y}' width='${f.w}' height='${f.h}' rx='1.5' fill='${interRgb(p.soil)}' stroke='rgba(0,0,0,.18)'/>`;
-          const rows = Math.max(3, Math.floor(f.w / 7));
-          for (let k = 0; k < rows; k++) {
-            const sx = f.x + 4 + k * ((f.w - 8) / Math.max(1, rows - 1));
-            fields += `<line x1='${sx.toFixed(1)}' y1='${f.y + 2}' x2='${sx.toFixed(1)}' y2='${f.y + f.h - 2}' stroke='rgba(0,0,0,.13)'/>`;
-            for (let s = 0; s < 3; s++) {
-              const sy = f.y + 2.5 + s * ((f.h - 5) / 2);
-              fields += `<circle cx='${sx.toFixed(1)}' cy='${sy.toFixed(1)}' r='.85' fill='${interRgb(p.sprout)}'/>`;
-            }
-          }
-        }
-        //Zwischenscreen nach Level 1 Hungersnot
-        let huts = "";
-        const hutDefs = [
-          { x: 96, y: 49, w: 17, h: 11 },
-          { x: 120, y: 51, w: 16, h: 10 },
-          { x: 140, y: 50, w: 13, h: 9 },
-        ];
-        for (let hi = 0; hi < hutDefs.length; hi++) {
-          const h = hutDefs[hi];
-          const cx = (h.x + h.w / 2).toFixed(1);
-          huts += `<rect x='${h.x}' y='${h.y}' width='${h.w}' height='${h.h}' fill='#d8c094' stroke='rgba(0,0,0,.25)'/>`;
-          huts += `<path d='M${(h.x - 1.5).toFixed(1)} ${h.y} L${cx} ${(h.y - h.h * 0.62).toFixed(1)} L${(h.x + h.w + 1.5).toFixed(1)} ${h.y} Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/>`;
-          huts += `<rect x='${cx - 2}' y='${h.y + h.h - 4}' width='4' height='4' fill='#6b4a2a'/>`;
-        }
-        const veg = `<path d='M10 57.5 L17 52.5 L25 57.5 Z' fill='#9aa1a8' stroke='rgba(0,0,0,.18)'/><path d='M24 59.5 L30 55.5 L37 59.5 Z' fill='#8b8f96' stroke='rgba(0,0,0,.18)'/><circle cx='42' cy='70' r='3.2' fill='${interRgb(p.bush)}' opacity='.9'/><rect x='91' y='52' width='2' height='6' fill='#6b4a2a'/><circle cx='92' cy='48' r='5' fill='${interRgb(p.bush)}' opacity='.95'/><circle cx='136' cy='50' r='4.2' fill='${interRgb(p.bush2)}' opacity='.95'/><circle cx='150' cy='53' r='3.4' fill='${interRgb(p.bush)}' opacity='.9'/>`;
-        const water = `<path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='#8fd8f5' stroke-width='3.2' opacity='.95'/><path d='M0 69 C24 63,52 73,90 66 C118 61,142 68,160 63' fill='none' stroke='rgba(255,255,255,.45)' stroke-width='.9'/>`;
-        const people = `<g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='66' cy='51.5' r='2' fill='#f2c9a0'/><path d='M66 53 L64.5 58 M64.5 58 L62 62 M64.5 58 L67 62 M66 54 L62 55 M66 54 L70 55' fill='none'/><rect x='57' y='53.4' width='18' height='2.6' rx='.8' fill='#8a5a33' stroke='rgba(0,0,0,.2)'/><circle cx='80' cy='54' r='2' fill='#f2c9a0'/><path d='M80 56 L79 61 M79 61 L76.5 65 M79 61 L81.5 65 M80 57 L76 58 M80 57 L84 58' fill='none'/><rect x='77.5' y='56' width='6' height='4' rx='.8' fill='#b9bec6' stroke='rgba(0,0,0,.25)'/>`;
-        const sun = `<circle cx='126' cy='21' r='17' fill='rgba(255,217,151,.25)'/><circle cx='126' cy='21' r='8.5' fill='#fff3c4'/><circle cx='126' cy='21' r='5.5' fill='rgba(255,255,255,.7)'/>`;
-        return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Gezeichneter Übergang vom kargen Tal zum grünen Dorf mit jungen Feldern, Hütten am Bach, Siedlern und Kindern'><defs><linearGradient id='iaSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(p.skyL)}'/><stop offset='.55' stop-color='${interRgb(p.skyM)}'/><stop offset='1' stop-color='${interRgb(p.skyR)}'/></linearGradient><linearGradient id='iaGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(p.groundL)}'/><stop offset='.52' stop-color='${interRgb(p.groundM)}'/><stop offset='1' stop-color='${interRgb(p.groundR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#iaSkyG)'/>${sun}<path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#iaGroundG)'/>${veg}${water}${fields}${huts}${people}</svg>`;
       }
       function showInterScreen(idx) {
         idx = Math.max(0, Math.min(LEVELS.length - 1, idx | 0));
@@ -1420,17 +1442,11 @@
         hideInterScreen();
         const free = idx + 1 >= LEVELS.length;
         const theme = interTheme(idx);
-        const art =
-          idx === 1
-            ? (() => {
-                const p = interPalette(idx);
-                return `<svg viewBox='0 0 160 90' preserveAspectRatio='xMidYMid slice' role='img' aria-label='Erfolg nach Bauwelle: neue Hütte, Hütte im Bau, Baumstämme, Bretter, Steine und fröhliche Siedler'><defs><linearGradient id='ibSkyG' x1='0' y1='0' x2='1' y2='.35'><stop offset='0' stop-color='${interRgb(p.skyL)}'/><stop offset='.55' stop-color='${interRgb(p.skyM)}'/><stop offset='1' stop-color='${interRgb(p.skyR)}'/></linearGradient><linearGradient id='ibGroundG' x1='0' y1='0' x2='1' y2='0'><stop offset='0' stop-color='${interRgb(p.groundL)}'/><stop offset='.52' stop-color='${interRgb(p.groundM)}'/><stop offset='1' stop-color='${interRgb(p.groundR)}'/></linearGradient></defs><rect width='160' height='90' fill='url(#ibSkyG)'/><circle cx='126' cy='21' r='8.5' fill='#fff3c4'/><path d='M0 57 C32 48,72 59,160 49 V90 H0 Z' fill='url(#ibGroundG)'/><circle cx='12' cy='62' r='3.2' fill='${interRgb(p.bush)}' opacity='.9'/><rect x='95' y='48' width='18' height='13' fill='#d8c094' stroke='rgba(0,0,0,.25)'/><path d='M93 48 L104 37 L115 48 Z' fill='${interRgb(p.roof)}' stroke='rgba(0,0,0,.25)'/><rect x='101' y='56' width='4' height='5' fill='#6b4a2a'/><path d='M127 59 H145 M127 49 V59 M135 49 V59 M143 49 V59 M126 48 H146 M127 48 L136 40 L145 48' stroke='#8a5a33' stroke-width='2' fill='none'/><path d='M150 52 V62 M153 52 V62 M150 55 H153 M150 58 H153 M150 61 H153' stroke='#7a5230' stroke-width='1.2'/><path d='M120 61 L128 52' stroke='#c49a6c' stroke-width='2' stroke-linecap='round'/><g fill='#6b4423' stroke='rgba(0,0,0,.3)'><circle cx='16' cy='74' r='2.4'/><circle cx='22' cy='74' r='2.4'/><circle cx='28' cy='74' r='2.4'/><circle cx='19' cy='70' r='2.4'/><circle cx='25' cy='70' r='2.4'/></g><g fill='#a26b3e'><circle cx='16' cy='74' r='.9'/><circle cx='22' cy='74' r='.9'/><circle cx='28' cy='74' r='.9'/><circle cx='19' cy='70' r='.9'/><circle cx='25' cy='70' r='.9'/></g><rect x='36' y='76' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><rect x='37' y='73.5' width='16' height='2.2' rx='.8' fill='#b98a5a' stroke='rgba(0,0,0,.2)'/><rect x='38' y='71' width='16' height='2.2' rx='.8' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/><path d='M54 78 L60 68' stroke='#c49a6c' stroke-width='2' stroke-linecap='round'/><ellipse cx='64' cy='76' rx='3.2' ry='2.2' fill='#8b8f96' stroke='rgba(0,0,0,.2)'/><ellipse cx='69' cy='75' rx='2.8' ry='2' fill='#9aa1a8' stroke='rgba(0,0,0,.2)'/><ellipse cx='66' cy='72' rx='2.4' ry='1.8' fill='#8b8f96' stroke='rgba(0,0,0,.2)'/><rect x='72' y='73' width='5' height='4' rx='1' fill='#7d8a94' stroke='rgba(0,0,0,.2)'/><g stroke='#5b3b20' stroke-width='1' stroke-linecap='round'><circle cx='82' cy='63' r='1.8' fill='#f2c9a0'/><path d='M82 64.8 L82 70 M82 70 L79.5 74 M82 70 L84.5 74 M82 66 L78.5 63 M82 66 L85.5 63' fill='none'/><circle cx='88' cy='65' r='1.8' fill='#f2c9a0'/><path d='M88 66.8 L88 72 M88 72 L85.5 76 M88 72 L90.5 76 M88 68 L84.5 62 M88 68 L91.5 62' fill='none'/><circle cx='94' cy='67' r='1.4' fill='#f2c9a0'/><path d='M94 68.4 L94 72 M94 72 L92 75 M94 72 L96 75 M94 69.5 L91.5 70 M94 69.5 L96.5 70' fill='none'/></g><path d='M81.3 63.4 q.7 .6 1.4 0 M87.3 65.4 q.7 .6 1.4 0 M93.4 67.3 q.6 .5 1.2 0' stroke='#7a3b2a' stroke-width='.45' fill='none'/><rect x='83' y='61.5' width='12' height='1.6' rx='.6' fill='#c49a6c' stroke='rgba(0,0,0,.2)'/></svg>`;
-              })()
-            : interArtSVG(idx);
+        const art = interArtSVG(idx + 1);
         const ov = document.createElement("div");
         ov.className = "startscreen inter-screen" + (free ? " free" : "");
         ov.id = "interScreen";
-        ov.innerHTML = `<div class='ss-sky' style='background:${theme.sky}'></div><div class='ss-ground' style='background:${theme.ground}'></div><div class='ss-dust'></div><section class='ss-inner' aria-label='Levelübergang'><div class='ss-headrow'><p class='ss-overline'>Kleines Aufbauspiel</p><h2 class='ss-title'>Dorf<em>grün</em></h2></div><p class='ss-lead'>${data.done}</p><div class='ss-art' onclick='interContinue()'>${art}</div><section class='ss-level'><h3>${data.nextTitle}</h3><p>${data.nextText}</p></section></section>`;
+        ov.innerHTML = `<div class='ss-sky' style='background:${theme.sky}'></div><div class='ss-ground' style='background:${theme.ground}'></div><div class='ss-dust'></div><section class='ss-inner' aria-label='Levelübergang'><div class='ss-headrow'><p class='ss-overline'>Kleines Aufbauspiel</p><h2 class='ss-title'>Dorf<em>grün</em></h2></div><p class='ss-lead'>${data.done}</p><div class='ss-art' onclick='interContinue()'>${art}</div><section class='ss-level'><h3>${data.nextTitle}</h3><p>${data.nextText}</p></section><div class='ss-credits'>by Miko Mynski</div></section>`;
         document.body.appendChild(ov);
       }
       function interContinue() {
@@ -3562,6 +3578,10 @@
       fitCanvas();
       buildPalette();
       initStorage();
+      const startLevelInfoEl = document.getElementById("startLevelInfo");
+      if (startLevelInfoEl && LEVELS[0].introTitle) {
+        startLevelInfoEl.innerHTML = `<h3>${LEVELS[0].introTitle}</h3><p>${LEVELS[0].introText}</p>`;
+      }
       function startGameFromScreen() {
         const screen = document.getElementById("startScreen");
         if (!screen || started) return;
